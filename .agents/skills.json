@@ -1,0 +1,13 @@
+{
+  "$schema": "https://raw.githubusercontent.com/google-deepmind/antigravity/main/schemas/skills.json",
+  "entries": [
+    { "path": "skills/01-gamedev-unity" },
+    { "path": "skills/02-gamedev-godot" },
+    { "path": "skills/03-3d-blender" },
+    { "path": "skills/04-video-youtube" },
+    { "path": "skills/05-marketing-seo-copy" },
+    { "path": "skills/06-automacao-redes-sociais" },
+    { "path": "skills/08-produtividade-documentos" },
+    { "path": "skills/09-ia-workflows-antigravity" }
+  ]
+}

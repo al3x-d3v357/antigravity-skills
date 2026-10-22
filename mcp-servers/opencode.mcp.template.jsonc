@@ -1,0 +1,61 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "servers": {
+      "mixamo": {
+        "type": "local",
+        "command": ["python", "D:\\GitHub\\mixamo-mcp\\server.py"],
+        "environment": {
+          "MIXAMO_OUTPUT_DIR": "D:\\GitHub\\projetos_unity\\3d\\samuraired\\Assets\\Characters",
+          "PYTHONIOENCODING": "utf-8"
+        }
+      },
+      "unity-mcp": {
+        "type": "local",
+        "command": ["C:\\Users\\alexa\\.unity\\relay\\relay_win.exe", "--mcp"]
+      },
+      "blender": {
+        "type": "local",
+        "command": ["uvx", "--python", "3.11", "mcp-for-blender"],
+        "environment": {
+          "UV_PYTHON_PREFERENCE": "only-managed",
+          "PYTHONIOENCODING": "utf-8"
+        }
+      },
+      "affinity": {
+        "type": "local",
+        "command": ["node", "D:\\GitHub\\affinity-mcp\\dist\\index.js"]
+      },
+      "gamemaker": {
+        "type": "local",
+        "command": ["node", "D:\\GitHub\\gamemaker-antigravity-mcp\\dist\\index.js"]
+      },
+      "stitch": {
+        "type": "remote",
+        "url": "https://stitch.googleapis.com/mcp",
+        "oauth": false,
+        "headers": {
+          "X-Goog-Api-Key": "{env:STITCH_API_KEY}"
+        }
+      },
+      "canva": {
+        "type": "remote",
+        "url": "https://mcp.canva.com/mcp"
+      },
+      "youtube": {
+        "type": "local",
+        "command": ["python", "D:\\GitHub\\youtube-mcp\\server.py"],
+        "environment": {
+          "PYTHONIOENCODING": "utf-8"
+        }
+      },
+      "curriculo-apply": {
+        "type": "local",
+        "command": ["python", "D:\\GitHub\\antigravity-skills\\skills\\curriculo-auto-apply\\scripts\\server.py"],
+        "environment": {
+          "PYTHONIOENCODING": "utf-8"
+        }
+      }
+    }
+  }
+}

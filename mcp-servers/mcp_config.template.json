@@ -1,0 +1,46 @@
+{
+    "mcpServers": {
+        "unity-mcp": {
+            "command": "C:\\Users\\alexa\\.unity\\relay\\relay_win.exe",
+            "args": [
+                "--mcp"
+            ]
+        },
+        "blender": {
+            "command": "uvx",
+            "args": [
+                "--python",
+                "3.11",
+                "mcp-for-blender"
+            ],
+            "env": {
+                "UV_PYTHON_PREFERENCE": "only-managed",
+                "PYTHONIOENCODING": "utf-8"
+            }
+        },
+        "gamemaker": {
+            "command": "node",
+            "args": [
+                "D:\\GitHub\\gamemaker-antigravity-mcp\\dist\\index.js"
+            ]
+        },
+        "StitchMCP": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "mcp-remote",
+                "https://stitch.googleapis.com/mcp",
+                "--header",
+                "X-Goog-Api-Key: {env:STITCH_API_KEY}"
+            ]
+        },
+        "canva": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "mcp-remote",
+                "https://mcp.canva.com/mcp"
+            ]
+        }
+    }
+}

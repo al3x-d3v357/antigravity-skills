@@ -1,0 +1,81 @@
+{
+  "project": "drift-video-editor",
+  "theme": "vibrant_modern",
+  "palette": {
+    "primary_dark_blue": "#3852B4",
+    "secondary_slate_blue": "#5E7AC4",
+    "accent_warm_gold": "#F3BE7A",
+    "accent_vibrant_orange": "#F08D39",
+    "text_mandatory": "#FFFFFF"
+  },
+  "brand_fox_iso": {
+    "coral": "#FF7F50",
+    "sunglow": "#FFD166",
+    "mint": "#06D6A0",
+    "teal": "#118AB2",
+    "text_mandatory": "#FFFFFF",
+    "assets": {
+      "brand_sheet": "D:/GitHub/baixa_games/imgs/brand_sheet.png",
+      "logo_full": "D:/GitHub/baixa_games/imgs/logo_full.png",
+      "logo_icon": "D:/GitHub/baixa_games/imgs/logo_icon.png",
+      "logo_badge": "D:/GitHub/baixa_games/imgs/logo_badge.png"
+    },
+    "usage": "Variante opcional para projetos Fox.iso — mapear coral=ação/perigo, sunglow=highlight, mint=sucesso, teal=info. Paleta Drift padrão segue obrigatória por default."
+  },
+  "video": {
+    "resolution": {
+      "width": 1920,
+      "height": 1080
+    },
+    "frame_rate": 60,
+    "pixel_format": "yuv420p",
+    "video_codec": "libx264",
+    "crf": 18,
+    "audio_codec": "aac",
+    "audio_bitrate": "256k",
+    "audio_sample_rate": 48000
+  },
+  "cards_and_overlays": {
+    "dimensions": {
+      "width": 1360,
+      "height": 190,
+      "border_radius": 16,
+      "position_bottom_offset": 250
+    },
+    "styling": {
+      "background": "rgba(10, 16, 32, 0.94)",
+      "border_colors": ["#F08D39", "#F3BE7A", "#5E7AC4", "#3852B4"],
+      "accent_bar_colors": ["#F08D39", "#F3BE7A", "#5E7AC4", "#3852B4"],
+      "glow_color": "rgba(240, 141, 57, 0.25)",
+      "text_title": "#FFFFFF",
+      "text_body": "#FFFFFF",
+      "text_highlight": "#F3BE7A",
+      "text_badge": "#F08D39"
+    },
+    "typography": {
+      "font_family_fallbacks": ["Segoe UI", "SF Pro Text", "Arial", "sans-serif"],
+      "title_font_size": 34,
+      "badge_font_size": 18,
+      "body_font_size": 23,
+      "highlight_font_size": 21
+    },
+    "animations": {
+      "slide_offset_y": 60,
+      "fade_duration": 0.4,
+      "sfx_cue_in": "whoosh_in / pop",
+      "sfx_cue_out": "whoosh_out / pop_down"
+    }
+  },
+  "sound_design": {
+    "music_directory": "C:/Users/alexa/Dropbox/song",
+    "music_volume": 0.85,
+    "sfx_volume": 0.90,
+    "micro_fade_seconds": 0.08,
+    "music_outro_fade_seconds": 2.7
+  },
+  "transitions": {
+    "xfade_default": "fade",
+    "xfade_dynamic": "smoothleft",
+    "duration_seconds": 0.5
+  }
+}
