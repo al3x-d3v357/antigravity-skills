@@ -25,7 +25,7 @@ const TOOLS = [
       properties: {
         character_class: {
           type: 'string',
-          enum: ['archer', 'tank', 'mage', 'support', 'elf_healer'],
+          enum: ['archer', 'tank', 'mage', 'support', 'elf_healer', 'cyberpunk_archer'],
           description: 'Classe do herói a ser gerado'
         },
         output_dir: {
@@ -374,6 +374,86 @@ function handleCreateCharacter(args) {
       setBox(vol, -6, 2, 13, -5, 4, 15, C_SKIN);
       setBox(vol, -7, 3, 16, -5, 5, 18, C_HEAL_GLOW);
       vol.setAt([-6, 4, 19], C_HEAL_SPARKLE);
+    `;
+  } else if (charClass === 'cyberpunk_archer') {
+    buildCode = `
+      const C_CARBON = [24, 27, 36, 255];
+      const C_CARBON_LIGHT = [45, 50, 65, 255];
+      const C_ORANGE = [255, 115, 0, 255];
+      const C_ORANGE_GLOW = [255, 160, 40, 255];
+      const C_CYBER_BLUE = [20, 60, 160, 255];
+      const C_CYAN = [0, 225, 255, 255];
+      const C_CYAN_GLOW = [120, 245, 255, 255];
+      const C_SKIN = [235, 195, 160, 255];
+      const C_HAIR = [30, 32, 42, 255];
+      const C_STEEL = [110, 120, 135, 255];
+
+      // Botas Taticas com Solado Neon Laranja
+      setBox(vol, -3, -2, 0, -1, 2, 0, C_ORANGE);
+      setBox(vol, 1, -2, 0, 3, 2, 0, C_ORANGE);
+      setBox(vol, -3, -2, 1, -1, 2, 3, C_CARBON);
+      setBox(vol, 1, -2, 1, 3, 2, 3, C_CARBON);
+
+      // Pernas / Calcas de Combate Azul Cibernetico com Joelheiras Ciano
+      setBox(vol, -3, -2, 4, -1, 1, 9, C_CYBER_BLUE);
+      setBox(vol, 1, -2, 4, 3, 1, 9, C_CYBER_BLUE);
+      vol.setAt([-2, 2, 6], C_CYAN);
+      vol.setAt([2, 2, 6], C_CYAN);
+
+      // Colete / Jaqueta Cibernetica Carbono com Faixas Laranja e Nucleo Ciano
+      setBox(vol, -4, -2, 10, 4, 2, 17, C_CARBON);
+      setBox(vol, -4, -3, 10, 4, -3, 11, C_ORANGE);
+      setBox(vol, -4, 3, 10, 4, 3, 11, C_ORANGE);
+      vol.setAt([-4, -2, 15], C_ORANGE);
+      vol.setAt([4, -2, 15], C_ORANGE);
+      // Reator / Nucleo Peitoral
+      setBox(vol, -1, 3, 13, 1, 3, 15, C_CYAN);
+      vol.setAt([0, 3, 14], C_CYAN_GLOW);
+
+      // Mochila de Bateria / Quiver Tatico nas Costas
+      setBox(vol, -3, -4, 11, 3, -3, 17, C_CARBON_LIGHT);
+      vol.setAt([-2, -4, 13], C_ORANGE);
+      vol.setAt([0, -4, 13], C_ORANGE);
+      vol.setAt([2, -4, 13], C_ORANGE);
+      vol.setAt([-2, -4, 16], C_CYAN);
+      vol.setAt([2, -4, 16], C_CYAN);
+
+      // Cabeca, Rosto e Cyber Visor
+      setBox(vol, -3, -3, 18, 3, 3, 24, C_SKIN);
+      // Visor Holografico Neon Azul/Ciano nos Olhos
+      setBox(vol, -3, 4, 21, 3, 4, 22, C_CYAN);
+      vol.setAt([2, 4, 22], C_ORANGE);
+
+      // Cabelo Cyberpunk com Pontas Spiky Laranja
+      setBox(vol, -4, -4, 20, 4, -3, 25, C_HAIR);
+      setBox(vol, -3, -3, 25, 3, 3, 26, C_HAIR);
+      vol.setAt([-2, 1, 27], C_ORANGE);
+      vol.setAt([0, 2, 27], C_ORANGE_GLOW);
+      vol.setAt([2, 1, 27], C_ORANGE);
+      vol.setAt([-1, -1, 27], C_ORANGE);
+      vol.setAt([1, -1, 27], C_ORANGE);
+
+      // Braco Direito (Humano com Manopla de Tiro)
+      setBox(vol, 4, -1, 14, 6, 1, 17, C_CYBER_BLUE);
+      setBox(vol, 5, -1, 11, 6, 1, 13, C_SKIN);
+      setBox(vol, 5, 0, 9, 6, 2, 11, C_CARBON);
+      vol.setAt([6, 1, 10], C_ORANGE);
+
+      // Braco Esquerdo (Protese Cibernetica Total em Aco/Ciano segurando o Arco)
+      setBox(vol, -6, -1, 14, -4, 1, 17, C_STEEL);
+      setBox(vol, -6, -1, 11, -5, 1, 13, C_CARBON_LIGHT);
+      vol.setAt([-6, 0, 12], C_CYAN);
+      setBox(vol, -6, 0, 9, -5, 3, 11, C_STEEL);
+
+      // Arco Composto Cyberpunk (Frame Carbono + Acentos Laranja + Laser Cord Ciano)
+      for (let z = 3; z <= 24; z++) vol.setAt([-6, 4, z], C_CARBON);
+      setBox(vol, -6, 4, 22, -6, 5, 24, C_ORANGE);
+      setBox(vol, -6, 4, 3, -6, 5, 5, C_ORANGE);
+      vol.setAt([-6, 6, 23], C_CYAN);
+      vol.setAt([-6, 6, 4], C_CYAN);
+      vol.setAt([-6, 3, 14], C_ORANGE);
+      vol.setAt([-6, 2, 14], C_CYAN);
+      for (let z = 5; z <= 22; z++) vol.setAt([-6, 2, z], C_CYAN);
     `;
   }
 
