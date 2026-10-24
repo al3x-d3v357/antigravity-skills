@@ -34,8 +34,9 @@ Este diretório contém todas as **55 Skills** do ecossistema Antigravity & Open
 ---
 
 ### 🎨 03. Modelagem e Animação 3D (`03-3d-blender/`)
-> Automações de rigging, UV unwrapping e handoff entre **Blender**, **Affinity** e **Engines**.
+> Automações de rigging, UV unwrapping, Voxel Art e handoff entre **Blender**, **Goxel**, **Affinity** e **Engines**.
 
+- **`goxel-voxel-artist`**: Modelagem 3D procedural e escultura de personagens, itens e cenários em Voxel Art utilizando o Goxel via MCP server ou AppImage CLI.
 - **`blender-mcp-batch-runner`**: Agrupa comandos do Blender em um único script Python (bpy) atômico para execução via MCP, eliminando vaivém de turnos.
 - **`blender-affinity-texturing`**: Workflow de exportação de UV de faces no Blender, pintura no Affinity e texturização no Base Color.
 - **`blender-to-unity`**: Pipeline de exportação e handoff direto de modelos 3D do Blender para a Unity via MCP.

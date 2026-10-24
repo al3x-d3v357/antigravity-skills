@@ -41,6 +41,12 @@
                 "mcp-remote",
                 "https://mcp.canva.com/mcp"
             ]
+        },
+        "goxel": {
+            "command": "node",
+            "args": [
+                "/media/alex/alex/antigravity-skills/al3x-antigravity-skills/mcp-servers/goxel/server.js"
+            ]
         }
     }
 }
