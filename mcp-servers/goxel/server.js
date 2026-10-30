@@ -9,8 +9,19 @@ const path = require('path');
 const { spawn, execSync } = require('child_process');
 const readline = require('readline');
 
-const GOXEL_BIN = process.env.GOXEL_BIN || (fs.existsSync('/media/alex/alex/softwares/goxel-0.15.1-extracted/AppRun') ? '/media/alex/alex/softwares/goxel-0.15.1-extracted/AppRun' : '/media/alex/alex/softwares/goxel-0.15.1.AppImage');
-const DEFAULT_OUTPUT_DIR = '/media/alex/alex/pro_unity/block_tactics/blocktactics/Assets/BlockTactics/VoxelCharacters';
+const GOXEL_BIN = process.env.GOXEL_BIN || (
+  fs.existsSync('/media/alex/alex/softwares/goxel-0.15.1-extracted/AppRun')
+    ? '/media/alex/alex/softwares/goxel-0.15.1-extracted/AppRun'
+    : (fs.existsSync('/media/alex/alex/softwares/goxel-0.15.1.AppImage')
+      ? '/media/alex/alex/softwares/goxel-0.15.1.AppImage'
+      : 'goxel')
+);
+
+const DEFAULT_OUTPUT_DIR = process.env.GOXEL_OUTPUT_DIR || (
+  fs.existsSync('/media/alex/alex/pro_unity/block_tactics/blocktactics/Assets/BlockTactics/VoxelCharacters')
+    ? '/media/alex/alex/pro_unity/block_tactics/blocktactics/Assets/BlockTactics/VoxelCharacters'
+    : path.join(process.cwd(), 'output_voxels')
+);
 
 if (!fs.existsSync(DEFAULT_OUTPUT_DIR)) {
   try { fs.mkdirSync(DEFAULT_OUTPUT_DIR, { recursive: true }); } catch (e) {}
@@ -25,7 +36,7 @@ const TOOLS = [
       properties: {
         character_class: {
           type: 'string',
-          enum: ['archer', 'tank', 'mage', 'support', 'elf_healer', 'cyberpunk_archer'],
+          enum: ['archer', 'tank', 'mage', 'support', 'elf_healer', 'cyberpunk_archer', 'ogre', 'peasant_rider'],
           description: 'Classe do herói a ser gerado'
         },
         output_dir: {
@@ -454,6 +465,316 @@ function handleCreateCharacter(args) {
       vol.setAt([-6, 3, 14], C_ORANGE);
       vol.setAt([-6, 2, 14], C_CYAN);
       for (let z = 5; z <= 22; z++) vol.setAt([-6, 2, z], C_CYAN);
+    `;
+  } else if (charClass === 'ogre') {
+    buildCode = `
+      // 4 Tons de Verde para a Pele e Anatomia do Ogro
+      const C_GREEN_DARK  = [34, 68, 28, 255];   // 1. Verde Escuro / Sombra Muscular e Contornos
+      const C_GREEN_MID   = [55, 110, 42, 255];  // 2. Verde Médio / Pele Base do Ogro
+      const C_GREEN_LIGHT = [82, 158, 58, 255];  // 3. Verde Claro / Musculatura em Destaque
+      const C_GREEN_PALE  = [122, 188, 82, 255]; // 4. Verde Pálido / Peito, Barriga e Iluminação
+
+      // Acessórios e Elementos Rústicos
+      const C_LEATHER      = [95, 52, 25, 255];
+      const C_LEATHER_DARK = [60, 32, 15, 255];
+      const C_BONE         = [225, 215, 185, 255];
+      const C_TUSK         = [240, 235, 205, 255];
+      const C_EYE_YELLOW   = [250, 190, 20, 255];
+      const C_PUPIL        = [30, 20, 10, 255];
+      const C_HAIR         = [42, 36, 30, 255];
+      const C_WOOD         = [75, 42, 22, 255];
+      const C_WOOD_DARK    = [58, 30, 14, 255];
+      const C_IRON         = [145, 150, 160, 255];
+
+      // 1. Pernas e Pés Maciços
+      // Perna Esquerda
+      setBox(vol, -6, -3, 0, -2, 3, 2, C_GREEN_DARK);
+      setBox(vol, -6, 3, 0, -2, 4, 1, C_GREEN_LIGHT);
+      vol.setAt([-5, 4, 0], C_BONE);
+      vol.setAt([-3, 4, 0], C_BONE);
+      setBox(vol, -6, -2, 3, -2, 2, 8, C_GREEN_MID);
+      setBox(vol, -5, 2, 3, -3, 2, 8, C_GREEN_LIGHT);
+      setBox(vol, -6, -3, 4, -2, 3, 5, C_LEATHER);
+
+      // Perna Direita
+      setBox(vol, 2, -3, 0, 6, 3, 2, C_GREEN_DARK);
+      setBox(vol, 2, 3, 0, 6, 4, 1, C_GREEN_LIGHT);
+      vol.setAt([3, 4, 0], C_BONE);
+      vol.setAt([5, 4, 0], C_BONE);
+      setBox(vol, 2, -2, 3, 6, 2, 8, C_GREEN_MID);
+      setBox(vol, 3, 2, 3, 5, 2, 8, C_GREEN_LIGHT);
+      setBox(vol, 2, -3, 4, 6, 3, 5, C_LEATHER);
+
+      // 2. Cintura, Tanga de Couro e Fivela de Crânio/Osso
+      setBox(vol, -6, -3, 9, 6, 3, 11, C_LEATHER_DARK);
+      setBox(vol, -3, 3, 7, 3, 4, 10, C_LEATHER);
+      setBox(vol, -3, -4, 8, 3, -3, 10, C_LEATHER_DARK);
+      setBox(vol, -6, -4, 11, 6, 4, 12, C_LEATHER);
+      setBox(vol, -2, 4, 10, 2, 5, 13, C_BONE);
+      vol.setAt([-1, 5, 11], C_PUPIL);
+      vol.setAt([1, 5, 11], C_PUPIL);
+
+      // 3. Tronco Gigantesco, Corcunda e Barriga Imponente
+      setBox(vol, -7, -4, 12, 7, 3, 21, C_GREEN_MID);
+      setBox(vol, -6, -5, 16, 6, -3, 23, C_GREEN_DARK); // Corcunda dorsal
+      setBox(vol, -5, 2, 12, 5, 5, 17, C_GREEN_PALE);   // Barriga volumosa em verde claro
+      setBox(vol, -6, 2, 18, 6, 5, 21, C_GREEN_LIGHT);  // Peitorais
+      setBox(vol, -1, 3, 18, 1, 5, 20, C_GREEN_MID);    // Divisão do peitoral
+      setBox(vol, -7, -1, 13, -7, 2, 17, C_GREEN_DARK);  // Flancos sombreados
+      setBox(vol, 7, -1, 13, 7, 2, 17, C_GREEN_DARK);
+
+      // Bandoleira de couro diagonal no peito
+      for (let i = -5; i <= 5; i++) {
+        let zL = Math.floor(13 + (i + 5) * 0.9);
+        vol.setAt([i, 4, zL], C_LEATHER);
+        vol.setAt([i, -4, zL], C_LEATHER);
+      }
+
+      // 4. Pescoço Maciço e Ombros
+      setBox(vol, -4, -2, 21, 4, 3, 23, C_GREEN_MID);
+      // Ombro Esquerdo
+      setBox(vol, -10, -3, 17, -7, 3, 22, C_GREEN_MID);
+      setBox(vol, -10, -2, 19, -8, 2, 22, C_GREEN_LIGHT);
+      setBox(vol, -11, -3, 20, -8, 3, 22, C_LEATHER); // Ombreira de couro
+      vol.setAt([-10, 0, 23], C_BONE); // Espinho de osso na ombreira
+      // Ombro Direito
+      setBox(vol, 7, -3, 17, 10, 3, 22, C_GREEN_MID);
+      setBox(vol, 8, -2, 19, 10, 2, 22, C_GREEN_LIGHT);
+
+      // 5. Cabeça de Ogro, Presas, Mandíbula e Olhos
+      setBox(vol, -4, -2, 22, 4, 3, 28, C_GREEN_MID);
+      setBox(vol, -4, 2, 21, 4, 5, 24, C_GREEN_LIGHT); // Mandíbula inferior protuberante
+      setBox(vol, -3, 4, 21, 3, 5, 22, C_GREEN_PALE);  // Queixo
+      // Presas inferiores voltadas para cima
+      vol.setAt([-3, 5, 23], C_TUSK);
+      vol.setAt([-3, 5, 24], C_TUSK);
+      vol.setAt([-3, 5, 25], C_TUSK);
+      vol.setAt([3, 5, 23], C_TUSK);
+      vol.setAt([3, 5, 24], C_TUSK);
+      vol.setAt([3, 5, 25], C_TUSK);
+
+      // Nariz achatado largo
+      setBox(vol, -2, 4, 24, 2, 5, 25, C_GREEN_DARK);
+      vol.setAt([-1, 5, 24], [20, 40, 16, 255]); // Narina
+      vol.setAt([1, 5, 24], [20, 40, 16, 255]);
+
+      // Sobrancelhas pesadas e olhos ferozes
+      setBox(vol, -4, 4, 27, 4, 5, 27, C_GREEN_DARK);
+      vol.setAt([-2, 4, 26], C_EYE_YELLOW);
+      vol.setAt([-1, 4, 26], C_PUPIL);
+      vol.setAt([2, 4, 26], C_EYE_YELLOW);
+      vol.setAt([1, 4, 26], C_PUPIL);
+
+      // Orelhas pontudas
+      setBox(vol, -6, 0, 24, -5, 1, 26, C_GREEN_LIGHT);
+      vol.setAt([-7, 0, 26], C_GREEN_PALE);
+      setBox(vol, 5, 0, 24, 6, 1, 26, C_GREEN_LIGHT);
+      vol.setAt([7, 0, 26], C_GREEN_PALE);
+
+      // Crista / Moicano rústico
+      setBox(vol, -1, -3, 28, 1, 1, 30, C_HAIR);
+      setBox(vol, -1, -4, 25, 1, -3, 28, C_HAIR);
+
+      // 6. Braço Esquerdo (Punho Fechado Ameaçador)
+      setBox(vol, -10, -2, 13, -7, 2, 17, C_GREEN_MID);
+      setBox(vol, -10, -2, 10, -7, 2, 12, C_LEATHER); // Braçadeira
+      vol.setAt([-10, 2, 11], C_IRON);
+      setBox(vol, -10, -1, 6, -6, 3, 9, C_GREEN_LIGHT); // Mão e Punho
+      setBox(vol, -10, 2, 6, -6, 3, 8, C_GREEN_DARK);
+
+      // 7. Braço Direito e Clava Gigante com Pregos
+      setBox(vol, 7, -2, 13, 10, 2, 17, C_GREEN_MID);
+      setBox(vol, 7, -2, 11, 10, 2, 12, C_LEATHER);
+      vol.setAt([10, 2, 11], C_IRON);
+      setBox(vol, 7, 0, 8, 10, 3, 10, C_GREEN_LIGHT); // Mão segurando a clava
+
+      // Porrete / Clava de Madeira Maciça
+      setBox(vol, 8, 1, 3, 9, 2, 15, C_WOOD); // Empunhadura
+      setBox(vol, 7, 0, 15, 11, 4, 25, C_WOOD); // Bloco principal
+      setBox(vol, 6, -1, 18, 12, 5, 23, C_WOOD_DARK); // Reforço central
+      // Cravos e espinhos de ferro
+      setBox(vol, 8, 1, 26, 9, 2, 27, C_IRON); // Espinho superior
+      setBox(vol, 5, 1, 19, 6, 2, 20, C_IRON); // Espinho lateral esquerdo
+      setBox(vol, 12, 1, 19, 13, 2, 20, C_IRON); // Espinho lateral direito
+      setBox(vol, 8, -2, 20, 9, -1, 21, C_IRON); // Espinho traseiro
+      setBox(vol, 8, 5, 20, 9, 6, 21, C_IRON);  // Espinho frontal
+    `;
+  } else if (charClass === 'peasant_rider') {
+    buildCode = `
+      // --- PALETA DE CORES ---
+      // Cavalo (Castanho Alazão)
+      const C_HORSE_BASE     = [135, 75, 40, 255];
+      const C_HORSE_DARK     = [95, 50, 25, 255];
+      const C_HORSE_LIGHT    = [165, 95, 55, 255];
+      const C_HORSE_MUZZLE   = [215, 190, 175, 255];
+      const C_HORSE_NOSE     = [60, 35, 25, 255];
+      const C_HORSE_EYE      = [25, 20, 15, 255];
+      const C_HORSE_MANE     = [45, 28, 18, 255];
+      const C_HOOF           = [40, 38, 35, 255];
+      const C_STAR_WHITE     = [240, 240, 245, 255];
+
+      // Arreios, Manta e Sela
+      const C_BLANKET        = [175, 55, 45, 255];
+      const C_SADDLE         = [85, 48, 26, 255];
+      const C_REINS          = [65, 38, 20, 255];
+      const C_STIRRUP        = [150, 155, 165, 255];
+      const C_SACK           = [195, 170, 125, 255];
+
+      // Camponês
+      const C_SKIN           = [225, 175, 135, 255];
+      const C_PANTS          = [80, 85, 95, 255];
+      const C_BOOTS          = [65, 40, 22, 255];
+      const C_TUNIC          = [210, 195, 165, 255];
+      const C_VEST           = [110, 70, 40, 255];
+      const C_BELT           = [55, 32, 18, 255];
+      const C_HAIR           = [85, 52, 28, 255];
+      const C_EYE            = [35, 75, 120, 255];
+      const C_STRAW_HAT      = [225, 195, 105, 255];
+      const C_STRAW_DARK     = [190, 160, 80, 255];
+
+      // Forcado / Pitchfork
+      const C_WOOD_POLE      = [115, 75, 45, 255];
+      const C_IRON_PRONGS    = [160, 165, 175, 255];
+
+      // 1. O CAVALO: PATAS E CASCOS
+      setBox(vol, -4, -10, 0, -2, -8, 2, C_HOOF);
+      setBox(vol, -4, -10, 3, -2, -8, 8, C_HORSE_DARK);
+      setBox(vol, -4, -10, 9, -2, -7, 13, C_HORSE_BASE);
+
+      setBox(vol, 2, -10, 0, 4, -8, 2, C_HOOF);
+      setBox(vol, 2, -10, 3, 4, -8, 8, C_HORSE_DARK);
+      setBox(vol, 2, -10, 9, 4, -7, 13, C_HORSE_BASE);
+
+      setBox(vol, -4, 7, 0, -2, 9, 2, C_HOOF);
+      setBox(vol, -4, 7, 3, -2, 9, 8, C_HORSE_DARK);
+      setBox(vol, -4, 6, 9, -2, 9, 13, C_HORSE_BASE);
+
+      setBox(vol, 2, 7, 0, 4, 9, 2, C_HOOF);
+      setBox(vol, 2, 7, 3, 4, 9, 8, C_HORSE_DARK);
+      setBox(vol, 2, 6, 9, 4, 9, 13, C_HORSE_BASE);
+
+      // 2. O CAVALO: CORPO, ANCA E DORSO
+      setBox(vol, -4, -10, 12, 4, 8, 17, C_HORSE_BASE);
+      setBox(vol, -3, -11, 13, 3, 9, 18, C_HORSE_LIGHT);
+      setBox(vol, -4, -11, 14, 4, -6, 18, C_HORSE_BASE);
+      setBox(vol, -4, 4, 14, 4, 9, 18, C_HORSE_BASE);
+
+      setBox(vol, -1, -12, 10, 1, -11, 17, C_HORSE_MANE);
+      setBox(vol, -1, -13, 5, 1, -12, 12, C_HORSE_MANE);
+      vol.setAt([0, -13, 4], C_HORSE_MANE);
+
+      // 3. O CAVALO: PESCOÇO, CABEÇA E CRINA
+      setBox(vol, -2, 7, 18, 2, 10, 21, C_HORSE_BASE);
+      setBox(vol, -2, 9, 20, 2, 12, 24, C_HORSE_BASE);
+      setBox(vol, -2, 11, 23, 2, 14, 27, C_HORSE_BASE);
+
+      setBox(vol, -1, 6, 19, 1, 7, 22, C_HORSE_MANE);
+      setBox(vol, -1, 8, 22, 1, 9, 25, C_HORSE_MANE);
+      setBox(vol, -1, 10, 25, 1, 11, 28, C_HORSE_MANE);
+
+      setBox(vol, -2, 13, 23, 2, 17, 27, C_HORSE_BASE);
+      setBox(vol, -2, 18, 22, 2, 20, 25, C_HORSE_MUZZLE);
+      vol.setAt([-1, 21, 23], C_HORSE_NOSE);
+      vol.setAt([1, 21, 23], C_HORSE_NOSE);
+      setBox(vol, -1, 15, 26, 1, 16, 27, C_STAR_WHITE);
+      vol.setAt([-3, 15, 25], C_HORSE_EYE);
+      vol.setAt([3, 15, 25], C_HORSE_EYE);
+      vol.setAt([-2, 13, 28], C_HORSE_DARK);
+      vol.setAt([-2, 13, 29], C_HORSE_BASE);
+      vol.setAt([2, 13, 28], C_HORSE_DARK);
+      vol.setAt([2, 13, 29], C_HORSE_BASE);
+
+      // 4. ARREIOS, SELA E SACO DE PROVISÕES
+      setBox(vol, -4, -3, 18, 4, 3, 18, C_BLANKET);
+      vol.setAt([-4, -3, 17], C_BLANKET);
+      vol.setAt([4, -3, 17], C_BLANKET);
+      vol.setAt([-4, 3, 17], C_BLANKET);
+      vol.setAt([4, 3, 17], C_BLANKET);
+
+      setBox(vol, -3, -2, 19, 3, 2, 19, C_SADDLE);
+      setBox(vol, -3, -3, 20, 3, -2, 20, C_SADDLE);
+      setBox(vol, -2, 2, 20, 2, 3, 20, C_SADDLE);
+
+      vol.setAt([-5, 0, 18], C_REINS);
+      vol.setAt([-5, 0, 17], C_REINS);
+      vol.setAt([-5, 0, 16], C_REINS);
+      vol.setAt([-5, 0, 15], C_STIRRUP);
+      vol.setAt([5, 0, 18], C_REINS);
+      vol.setAt([5, 0, 17], C_REINS);
+      vol.setAt([5, 0, 16], C_REINS);
+      vol.setAt([5, 0, 15], C_STIRRUP);
+
+      setBox(vol, -3, 17, 23, 3, 18, 23, C_REINS);
+      for (let y = 5; y <= 17; y++) {
+        let zR = Math.floor(21 + (y - 5) * 0.16);
+        vol.setAt([-3, y, zR], C_REINS);
+        vol.setAt([3, y, zR], C_REINS);
+      }
+
+      setBox(vol, -3, -8, 18, 3, -5, 21, C_SACK);
+      setBox(vol, -4, -7, 19, -3, -6, 20, C_SACK);
+      setBox(vol, 3, -7, 19, 4, -6, 20, C_SACK);
+      for (let x = -3; x <= 3; x++) {
+        vol.setAt([x, -6, 21], C_BELT);
+      }
+
+      // 5. O CAMPONÊS: PERNAS E BOTAS MONTADAS
+      setBox(vol, -4, -1, 19, -3, 1, 20, C_PANTS);
+      setBox(vol, -5, -1, 16, -4, 1, 18, C_PANTS);
+      setBox(vol, -5, 0, 13, -4, 2, 15, C_BOOTS);
+
+      setBox(vol, 3, -1, 19, 4, 1, 20, C_PANTS);
+      setBox(vol, 4, -1, 16, 5, 1, 18, C_PANTS);
+      setBox(vol, 4, 0, 13, 5, 2, 15, C_BOOTS);
+
+      // 6. O CAMPONÊS: TRONCO, TÚNICA E COLETE
+      setBox(vol, -2, -1, 20, 2, 1, 21, C_BELT);
+      vol.setAt([0, 2, 21], [220, 180, 50, 255]);
+
+      setBox(vol, -3, -1, 22, 3, 1, 27, C_TUNIC);
+      setBox(vol, -3, -2, 22, 3, -1, 27, C_VEST);
+      setBox(vol, -3, 0, 22, -2, 2, 27, C_VEST);
+      setBox(vol, 2, 0, 22, 3, 2, 27, C_VEST);
+
+      setBox(vol, -1, -1, 28, 1, 1, 28, C_SKIN);
+
+      // 7. CABEÇA, ROSTO E CHAPÉU DE PALHA
+      setBox(vol, -2, -1, 29, 2, 2, 32, C_SKIN);
+      setBox(vol, -3, -2, 29, 3, -1, 33, C_HAIR);
+      setBox(vol, -3, 0, 29, -3, 2, 32, C_HAIR);
+      setBox(vol, 3, 0, 29, 3, 2, 32, C_HAIR);
+
+      vol.setAt([-1, 3, 31], C_EYE);
+      vol.setAt([1, 3, 31], C_EYE);
+      vol.setAt([0, 3, 30], [210, 155, 115, 255]);
+      vol.setAt([-1, 3, 29], C_HAIR);
+      vol.setAt([0, 3, 29], [190, 130, 100, 255]);
+      vol.setAt([1, 3, 29], C_HAIR);
+
+      setBox(vol, -5, -4, 33, 5, 4, 33, C_STRAW_DARK);
+      setBox(vol, -3, -2, 34, 3, 2, 35, C_STRAW_HAT);
+      setBox(vol, -2, -1, 36, 2, 1, 36, C_STRAW_HAT);
+      for (let x = -3; x <= 3; x++) {
+        vol.setAt([x, -3, 34], C_BELT);
+        vol.setAt([x, 3, 34], C_BELT);
+      }
+
+      // 8. BRAÇOS, RÉDEAS E FORCADO DE FENO
+      setBox(vol, -4, 0, 25, -3, 1, 27, C_TUNIC);
+      setBox(vol, -4, 1, 23, -3, 3, 25, C_SKIN);
+      setBox(vol, -3, 3, 22, -2, 4, 23, C_SKIN);
+
+      setBox(vol, 3, 0, 25, 4, 1, 27, C_TUNIC);
+      setBox(vol, 4, 1, 24, 5, 2, 26, C_SKIN);
+      setBox(vol, 4, 2, 23, 5, 3, 24, C_SKIN);
+
+      for (let z = 10; z <= 38; z++) {
+        vol.setAt([5, 3, z], C_WOOD_POLE);
+      }
+      setBox(vol, 3, 3, 39, 7, 3, 39, C_IRON_PRONGS);
+      setBox(vol, 3, 3, 40, 3, 3, 45, C_IRON_PRONGS);
+      setBox(vol, 5, 3, 40, 5, 3, 46, C_IRON_PRONGS);
+      setBox(vol, 7, 3, 40, 7, 3, 45, C_IRON_PRONGS);
     `;
   }
 
