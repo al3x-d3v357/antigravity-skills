@@ -1,0 +1,12 @@
+*.png
+*.jpg
+*.jpeg
+*.mp4
+*.zip
+.venv/
+__pycache__/
+*.pyc
+*snapshot*.json
+channel_videos*.json
+all_channel_videos.json
+draft_modal_buttons.json

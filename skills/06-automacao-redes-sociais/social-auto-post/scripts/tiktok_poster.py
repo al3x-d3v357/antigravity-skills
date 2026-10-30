@@ -9,7 +9,11 @@ from typing import List, Optional
 from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
 
 SESSIONS_DIR = Path(os.path.expanduser("~/.social_sessions"))
-SESSIONS_DIR.mkdir(parents=True, exist_ok=True)
+try:
+    SESSIONS_DIR.mkdir(parents=True, exist_ok=True)
+except Exception:
+    SESSIONS_DIR = Path("/media/alex/alex/mcp-servers/social_sessions")
+    SESSIONS_DIR.mkdir(parents=True, exist_ok=True)
 SESSION_FILE = SESSIONS_DIR / "session_tiktok.json"
 HISTORY_FILE = SESSIONS_DIR / "tiktok_posts_history.json"
 
@@ -130,16 +134,25 @@ def post_tiktok(text: str, video_path: str, headless: bool = True) -> bool:
             file_input.set_input_files(abs_video_path)
             page.wait_for_timeout(6000)
 
-            # Fechar possíveis popups de tutorial / onboarding (ex: 'Entendi')
-            entendi_btn = page.locator('button:has-text("Entendi"), button:has-text("Got it")')
-            if entendi_btn.count():
-                for i in range(entendi_btn.count()):
-                    try:
-                        if entendi_btn.nth(i).is_visible():
-                            entendi_btn.nth(i).click()
-                            page.wait_for_timeout(500)
-                    except Exception:
-                        pass
+            # Fechar possíveis popups de tutorial / onboarding / consentimento do TikTok Studio
+            popups_selectors = [
+                'button:has-text("Turn on")',
+                'button:has-text("Got it")',
+                'button:has-text("Entendi")',
+                'button:has-text("Cancel")',
+                'button[aria-label="Close"]',
+                '.TUXModal-close',
+                'svg[data-icon="Cross"]'
+            ]
+            for sel in popups_selectors:
+                try:
+                    btns = page.locator(sel)
+                    for i in range(btns.count()):
+                        if btns.nth(i).is_visible():
+                            btns.nth(i).click(force=True)
+                            page.wait_for_timeout(400)
+                except Exception:
+                    pass
 
             # Rolar ao topo e preencher legenda
             page.evaluate("window.scrollTo(0, 0)")
@@ -162,22 +175,37 @@ def post_tiktok(text: str, video_path: str, headless: bool = True) -> bool:
             page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
             page.wait_for_timeout(1000)
 
-            publish_btn = page.locator('button:has-text("Publicar"), button:has-text("Post")').first
-            for _ in range(25):
-                if not publish_btn.get_attribute("disabled"):
-                    log("Vídeo processado e pronto para publicação!")
-                    break
+            # Fechar qualquer popup residual antes de clicar em Publicar
+            for sel in popups_selectors:
+                try:
+                    btns = page.locator(sel)
+                    for i in range(btns.count()):
+                        if btns.nth(i).is_visible():
+                            btns.nth(i).click(force=True)
+                            page.wait_for_timeout(400)
+                except Exception:
+                    pass
+
+            # Localizar botão de Publicar excluindo o Sidebar
+            publish_btn = page.locator('button:has-text("Post"):not([data-tt*="Sidebar"]), button:has-text("Publicar"):not([data-tt*="Sidebar"]), button[data-e2e="post_video_button"], .btn-post > button').last
+            for _ in range(30):
+                try:
+                    if publish_btn.is_visible() and not publish_btn.get_attribute("disabled"):
+                        log("Vídeo processado e botão de publicação habilitado!")
+                        break
+                except Exception:
+                    pass
                 page.wait_for_timeout(2000)
 
             log("Clicando no botão de publicação...")
-            publish_btn.click()
-            page.wait_for_timeout(2500)
+            publish_btn.click(force=True)
+            page.wait_for_timeout(4000)
 
-            # Verifica se apareceu popup de confirmação (ex: "Publicar agora")
-            pub_agora_btn = page.locator('button:has-text("Publicar agora")').first
-            if pub_agora_btn.is_visible(timeout=3000):
+            # Se ainda houver popup de confirmação (ex: "Post now" / "Publicar agora")
+            confirm_btn = page.locator('button:has-text("Post now"), button:has-text("Publicar agora"), button:has-text("Confirmar")').first
+            if confirm_btn.is_visible(timeout=3000):
                 log("Confirmando publicação imediata...")
-                pub_agora_btn.click()
+                confirm_btn.click(force=True)
                 page.wait_for_timeout(6000)
 
             log("SUCESSO: Post publicado no TikTok!")

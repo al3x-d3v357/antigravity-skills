@@ -9,7 +9,11 @@ from typing import List, Optional
 from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
 
 SESSIONS_DIR = Path(os.path.expanduser("~/.social_sessions"))
-SESSIONS_DIR.mkdir(parents=True, exist_ok=True)
+try:
+    SESSIONS_DIR.mkdir(parents=True, exist_ok=True)
+except Exception:
+    SESSIONS_DIR = Path("/media/alex/alex/mcp-servers/social_sessions")
+    SESSIONS_DIR.mkdir(parents=True, exist_ok=True)
 SESSION_FILE = SESSIONS_DIR / "session_x_twitter.json"
 HISTORY_FILE = SESSIONS_DIR / "x_posts_history.json"
 

@@ -1,12 +1,12 @@
 ---
 name: social-auto-post
 description: >-
-  Automação inteligente e silenciosa para publicação de conteúdos, renders 3D, vídeos turntable e devlogs no Threads, Instagram, X e TikTok em segundo plano via Playwright. Segue diretrizes estritas do Alex: linguagem casual e autêntica, ZERO emojis nas legendas, postagem individual de cada projeto com hashtags contextuais e sem obrigatoriedade de música.
+  Automação inteligente e silenciosa para publicação de conteúdos, renders 3D, vídeos turntable e devlogs no Kwai, TikTok, YouTube, Threads, Instagram e X em segundo plano via Playwright. Segue diretrizes estritas do Alex: linguagem casual e autêntica, ZERO emojis nas legendas, postagem individual de cada projeto com hashtags contextuais e sem obrigatoriedade de música.
 ---
 
-# Social Auto-Post - Automação de Publicações (Threads, Instagram, X & TikTok)
+# Social Auto-Post - Automação de Publicações (Kwai, TikTok, YouTube, Threads, Instagram & X)
 
-Esta skill automatiza a publicação de artes 3D, demonstrações técnicas, vídeos de gameplay/turntable e devlogs diretamente no **Threads**, **Instagram**, **X (Twitter)** e **TikTok** de forma autônoma e em segundo plano (**"por trás dos panos"**), operando através do Playwright integrado ao ecossistema do Alex.
+Esta skill automatiza a publicação de artes 3D, demonstrações técnicas, vídeos de gameplay/turntable e devlogs diretamente no **Kwai**, **TikTok**, **YouTube**, **Threads**, **Instagram** e **X (Twitter)** de forma autônoma e em segundo plano (**"por trás dos panos"**), operando através do Playwright integrado ao ecossistema do Alex.
 
 ---
 
@@ -72,6 +72,18 @@ python tiktok_poster.py --login
 
 # Publicar clipe / vídeo de gameplay no TikTok:
 python tiktok_poster.py --video "D:\caminho\gameplay.mp4" --post "Ajustando física dos projéteis na Godot" --hashtags "#gamedev #godot #indiedev"
+```
+
+### 4. Kwai
+```bash
+# Criar conta ou fazer login no Kwai:
+python kwai_poster.py --login
+
+# Verificar status da sessão:
+python kwai_poster.py --status
+
+# Publicar clipe / vídeo no Kwai:
+python kwai_poster.py --video "/caminho/video.mp4" --post "Testando shaders e física na Unity 6" --hashtags "#gamedev #unity #3d"
 ```
 
 ---
