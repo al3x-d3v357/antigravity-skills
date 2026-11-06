@@ -1,15 +1,79 @@
 {
   "user": {
-    "handle": "@al3x_d3v357",
-    "name": "Alex Sandro"
+    "handle": "@arthursantos.real",
+    "dev_handle": "@al3x_d3v357",
+    "name": "Alex Sandro",
+    "bio": "Alex RJ, apenas um desenvolvedor de jogos."
   },
+  "foreign_benchmarks": [
+    {
+      "handle": "@polygonrunway",
+      "country": "Slovakia (International)",
+      "followers": "366K+",
+      "niche": "Blender 3D, Low-Poly, Isometric & Hard Surface",
+      "caption_style": "One-line curiosity/result hook ('Works like a charm...', 'Just slap it on the surface!') + short technical takeaway on Blender modifiers/workflow.",
+      "top_hashtags": "#blender3d #blendertips #hardsurface #lowpoly #lowpolyart #b3d #3dmodeling #isometricart #stylizedart",
+      "music_style": "Minimal Lo-Fi Chillhop / Soft Synthwave background or clean ASMR viewport clicks"
+    },
+    {
+      "handle": "@southernshotty",
+      "country": "USA (International)",
+      "followers": "92K+",
+      "niche": "Stylized 3D Character Animation, Pixel-Art Shaders & Blender Tools",
+      "caption_style": "Personal devlog opener ('Been working on...') + 2-3 sentences explaining the exact technical pipeline/camera/shader + open question to the community.",
+      "top_hashtags": "#blender3d #tutorials #animationfilm #3dart #pixelart #gamedev #b3d #stylized3d",
+      "music_style": "Cozy Indie Game OST / Upbeat Lo-Fi Beat synced to animation loops"
+    },
+    {
+      "handle": "@megavoxels",
+      "country": "USA (International)",
+      "followers": "74K+",
+      "niche": "Voxel Art 3D, Blocky Characters, Isometric Builds & Pixel Art",
+      "caption_style": "Direct question or process hook ('How many voxels do you think it took...?', 'Here is a 3D model made out of voxels...') + clean separators + tool credit + dense voxel tag block.",
+      "top_hashtags": "#voxelart #3dart #magicavoxel #voxels #voxel #voxelartist #processart #pixelart #3dmodel #gamedev",
+      "music_style": "High-energy Electronic / Rock (e.g. Linkin Park - Burn It Down) or 8-Bit Chiptune / Synthwave for fast timelapses"
+    },
+    {
+      "handle": "@imphenzia",
+      "country": "Sweden / Australia (International)",
+      "followers": "Global Reference",
+      "niche": "Low-Poly Speed Modeling in Blender & Indie GameDev in Unity",
+      "caption_style": "Constraint/time challenge context ('Modeled from default cube in 10 minutes...') + breakdown of lighting/reflections/engine setup (Eevee / Unity).",
+      "top_hashtags": "#lowpoly #lowpolyart #3d #blender3d #blender #3dart #gamedev #indiegamedev #cgi #3dmodeling #3dmodel #characterdesign #dailyrender #gameart #unity #unity3d #indiegame #indiedev #3drender #eevee",
+      "music_style": "Driving 80s Synthwave / Retrowave / Outrun (Narvent, Hotel Pools, Krosia, FM-84 style)"
+    }
+  ],
   "hashtags": {
-    "3d_showcase": "#b3d #blender3d #3Dart #3DModel #Anime3D #AI3D #CharacterDesign #3DArtist",
-    "gamedev": "#gamedev #indiedev #unity3d #madewithunity #indiegame",
-    "motion": "#motiongraphics #turntable360 #render #cgi"
+    "gamedev_unity": "#madewithunity #unity3d #unity6 #gamedev #indiegamedev #indiegame #gamedevelopment #gamedesign #csharp #3dart #lowpoly #b3d #devlog #gameart",
+    "gamedev_godot": "#godotengine #godot4 #gamedev #indiegamedev #indiegame #gamedevelopment #gamedesign #b3d #blender3d #lowpoly #gameart #devlog",
+    "blender_3d": "#blender3d #b3d #blendertips #lowpoly #lowpolyart #3dmodeling #3dart #3dmodel #stylizedart #hardsurface #characterdesign #3drender #gameart #indiegamedev",
+    "voxel_art": "#voxelart #voxels #voxel #voxelartist #magicavoxel #3dart #lowpoly #blender3d #b3d #3dmodel #gameart #indiegamedev #characterdesign #processart",
+    "pixel_art": "#pixelart #2dart #sprites #gamedev #indiegamedev #indiegame #gameart #retrogame #gamedevelopment #pixelartist"
+  },
+  "trending_music": {
+    "gamedev_action_vehicle": [
+      "Narvent - Fainted (Synthwave / Dark Retrowave - Alta retenção em física e veículos)",
+      "Kordhell / Phonk Instrumental Suave ou Synthwave Outrun 120 BPM (Ideal para cortes rápidos de gameplay e colisão)",
+      "LINKIN PARK - BURN IT DOWN (Usado por @megavoxels em timelapses e showcases de ação)"
+    ],
+    "blender_timelapse_3d": [
+      "Hotel Pools - Eclipse (Chill Synthwave - Padrão gringo para speed modeling e hard surface no Blender)",
+      "Krosia - Azur (Ambient Synthwave - Excelente para turntables 360, iluminação de estúdio e clay render)",
+      "Forhill - Odyssey (Retrowave Atmosférico - Muito usado em showcases de malha/wireframe para render final)"
+    ],
+    "voxel_and_character_anim": [
+      "Lo-Fi Girl / Chillhop Beats Instrumental 90 BPM (Padrão @polygonrunway e @southernshotty para loops de personagens)",
+      "Chiptune / Cozy Arcade Instrumental (Ideal para personagens ToyCube, Voxel Art e animações de ataque/walk cycle)",
+      "The Midnight - Sunset (Instrumental Synthwave para apresentação de personagens estilizados)"
+    ],
+    "devlog_and_code": [
+      "Lo-Fi Study Beats / Warm Rhodes Piano (Fundo limpo para devlogs de sistemas, ferramentas e UI)",
+      "Original Audio + Mechanical Keyboard / Viewport Clicks + Lo-Fi baixo (-18 LUFS)"
+    ]
   },
   "templates": {
-    "flat_vs_clay_showcase": "Estudo comparativo de renderização 3D e densidade de malha!\n\n🔹 Topo: Renderização Flat (Diffuse 1:1, cores nativas da IA)\n🔸 Base: Renderização Clay Shaded (Cavity Both)\n\nModelo: {character_name}\nIA Geradora: {ai_name} ({ai_url})\nPolígonos: {polys} | Vértices: {verts}\n\nFeito no Blender Workbench 5.2 LTS.",
-    "flat_angles_gallery": "Showcase de ângulos e silhueta em Renderização Flat (cor pura sem sombras)!\n\nPersonagem: {character_name}\nGerada nativamente via {ai_name}\n\nConfira os 5 ângulos em alta resolução!"
+    "foreign_adapted_gamedev": "{hook}\n\nO que foi implementado nesta build:\n- {point_1}\n- {point_2}\n- {point_3}\n\n{question}",
+    "foreign_adapted_3d_showcase": "{hook}\n\nPipeline tecnica deste modelo:\n- Modelagem e topologia: {workflow}\n- Render e iluminacao: {render_engine}\n- Aplicacao: Asset pronto para {target_engine}\n\n{question}",
+    "foreign_adapted_short_punchy": "{hook}\n\n{technical_summary}\n\n{question}"
   }
 }

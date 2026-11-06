@@ -8,20 +8,42 @@ from datetime import datetime
 from typing import List, Optional
 from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
 
+sys.path.append(str(Path(__file__).resolve().parent))
+import trend_analyzer
+
 SESSIONS_DIR = Path(os.path.expanduser("~/.social_sessions"))
 try:
     SESSIONS_DIR.mkdir(parents=True, exist_ok=True)
 except Exception:
     SESSIONS_DIR = Path("/media/alex/alex/mcp-servers/social_sessions")
     SESSIONS_DIR.mkdir(parents=True, exist_ok=True)
+
+FALLBACK_SESSIONS_DIR = Path("/media/alex/alex/mcp-servers/social_sessions")
 SESSION_FILE = SESSIONS_DIR / "session_instagram.json"
 HISTORY_FILE = SESSIONS_DIR / "instagram_posts_history.json"
+
+
+def resolve_session_file() -> Path:
+    if SESSION_FILE.exists():
+        return SESSION_FILE
+    alt_ig = FALLBACK_SESSIONS_DIR / "session_instagram.json"
+    if alt_ig.exists():
+        return alt_ig
+    threads_session = SESSIONS_DIR / "session_threads.json"
+    if threads_session.exists():
+        return threads_session
+    alt_threads = FALLBACK_SESSIONS_DIR / "session_threads.json"
+    if alt_threads.exists():
+        return alt_threads
+    return SESSION_FILE
+
 
 def log(msg: str):
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print(f"[{timestamp}] {msg}", flush=True)
 
-def record_post_history(text: str, media_paths: List[str], success: bool, details: str = ""):
+
+def record_post_history(text: str, media_paths: List[str], success: bool, details: str = "", trend_report: Optional[dict] = None):
     history = []
     if HISTORY_FILE.exists():
         try:
@@ -29,18 +51,24 @@ def record_post_history(text: str, media_paths: List[str], success: bool, detail
                 history = json.load(f)
         except Exception:
             history = []
-    
+
     entry = {
         "timestamp": datetime.now().isoformat(),
         "platform": "Instagram",
         "text": text,
         "media": media_paths,
         "success": success,
-        "details": details
+        "details": details,
+        "recommended_music": (trend_report or {}).get("recommended_music_tracks", []),
+        "foreign_benchmarks": (trend_report or {}).get("foreign_pages_analyzed", [])
     }
     history.append(entry)
-    with open(HISTORY_FILE, "w", encoding="utf-8") as f:
-        json.dump(history, f, indent=2, ensure_ascii=False)
+    try:
+        with open(HISTORY_FILE, "w", encoding="utf-8") as f:
+            json.dump(history, f, indent=2, ensure_ascii=False)
+    except Exception:
+        pass
+
 
 def interactive_login():
     """Abre o navegador visível para autenticar na conta do Instagram e salva a sessão."""
@@ -48,7 +76,7 @@ def interactive_login():
     print("  [SOCIAL AUTO-POST] Configuração de Login - INSTAGRAM")
     print("=" * 72)
     print("1. O navegador será aberto na página de login do Instagram.")
-    print("2. Faça o login com sua conta do Instagram (@al3x_d3v357).")
+    print("2. Faça o login com sua conta do Instagram (@arthursantos.real / @al3x_d3v357).")
     print("3. Quando já estiver logado e no Feed do Instagram,")
     print("   volte aqui neste terminal e pressione a tecla ENTER para salvar a sessão.")
     print("=" * 72)
@@ -71,20 +99,29 @@ def interactive_login():
         print("\n>>> Aguardando você fazer login no navegador aberto... <<<")
         input(">>> Pressione ENTER AQUI após concluir o login e estar no Feed do Instagram... <<<\n")
 
-        # Salva o estado da sessão (cookies, tokens e storage)
         context.storage_state(path=str(SESSION_FILE))
+        if FALLBACK_SESSIONS_DIR.exists():
+            context.storage_state(path=str(FALLBACK_SESSIONS_DIR / "session_instagram.json"))
         log(f"SUCESSO! Credenciais e sessão do Instagram salvas em: {SESSION_FILE}")
         browser.close()
 
-def post_instagram(text: str, media_paths: Optional[List[str]] = None, headless: bool = True) -> bool:
-    """Publica um post no Instagram Feed com mídia e legenda."""
-    # Se ainda não houver sessão exclusiva do Instagram, mas houver do Threads (mesmo ecossistema Meta)
-    active_session = SESSION_FILE
-    threads_session = SESSIONS_DIR / "session_threads.json"
-    if not active_session.exists() and threads_session.exists():
-        log("Sessão direta do Instagram não encontrada, verificando compatibilidade...")
-        active_session = threads_session
 
+def post_instagram(text: str, media_paths: Optional[List[str]] = None, hashtags: str = "", headless: bool = True, live_trends: bool = False) -> bool:
+    """Analisa tendências internacionais antes de publicar um post no Instagram."""
+    # 1. Análise Obrigatória de Tendências do Exterior (Tags, Música e Legenda)
+    trend_report = trend_analyzer.analyze_and_adapt(
+        raw_text=text,
+        custom_hashtags=hashtags,
+        media_paths=media_paths,
+        live=live_trends
+    )
+    trend_analyzer.print_trend_report(trend_report)
+
+    clean_caption = trend_report["adapted_caption_zero_emojis"]
+    final_hashtags = trend_report["recommended_international_hashtags"]
+    full_text = f"{clean_caption}\n\n{final_hashtags}".strip()
+
+    active_session = resolve_session_file()
     if not active_session.exists():
         log("ERRO: Nenhuma sessão encontrada para o Instagram!")
         log("Execute primeiro o comando de login: python instagram_poster.py --login")
@@ -104,7 +141,6 @@ def post_instagram(text: str, media_paths: Optional[List[str]] = None, headless:
         return False
 
     log(f"Iniciando publicação no Instagram... (Headless: {headless})")
-    log(f"Legenda: {text[:80]}..." if len(text) > 80 else f"Legenda: {text}")
     log(f"Mídias ({len(valid_medias)}): {valid_medias}")
 
     with sync_playwright() as p:
@@ -127,76 +163,113 @@ def post_instagram(text: str, media_paths: Optional[List[str]] = None, headless:
             page.goto("https://www.instagram.com/", timeout=45000)
             page.wait_for_timeout(3000)
 
-            # Verifica se caiu em tela de login
             if "accounts/login" in page.url:
                 log("ALERTA: Sessão expirada ou redirecionada para tela de login.")
-                record_post_history(text, valid_medias, False, "Sessao expirada")
+                record_post_history(full_text, valid_medias, False, "Sessao expirada", trend_report)
                 browser.close()
                 return False
 
-            # Clica no botão "Criar" / "Novo Post" (SVG ou texto 'Criar'/'Create')
             create_btn = page.locator('svg[aria-label="Nova publicação"], svg[aria-label="New post"], a[href="#"][role="link"]:has-text("Criar"), span:has-text("Criar")').first
             if not create_btn.is_visible(timeout=5000):
                 create_btn = page.locator('svg[aria-label="Criar"], svg[aria-label="Create"]').first
-            
+
             create_btn.click()
             page.wait_for_timeout(2000)
 
-            # Upload do arquivo via input[type="file"]
+            try:
+                page.evaluate('''() => {
+                    const spans = Array.from(document.querySelectorAll('span')).filter(el => el.textContent.trim() === 'Post' || el.textContent.trim() === 'Publicação');
+                    if (spans.length === 0) return;
+                    let target = spans[0];
+                    while (target && target.tagName !== 'A' && target.tagName !== 'BUTTON' && !target.getAttribute('role')) {
+                        target = target.parentElement;
+                    }
+                    if (target) { target.click(); }
+                    else { spans[0].click(); }
+                }''')
+                page.wait_for_timeout(2500)
+            except Exception as e_menu:
+                log(f"Aviso submenu post: {e_menu}")
+
             file_input = page.locator('input[type="file"]')
             file_input.set_input_files(valid_medias[0])
             page.wait_for_timeout(4000)
 
-            # Seleciona proporção Original / 16:9 para preservar resolução total (sem cortar para 1:1)
+            try:
+                ok_btn = page.locator('button:has-text("OK"), div[role="button"]:has-text("OK"), button:has-text("Entendi")').first
+                if ok_btn.is_visible(timeout=3000):
+                    log("Fechando modal de aviso do Reels ('OK')...")
+                    ok_btn.click(force=True)
+                    page.wait_for_timeout(1000)
+            except Exception as ok_err:
+                log(f"Aviso popup reels: {ok_err}")
+
             try:
                 crop_btn = page.locator('button:has(svg[aria-label="Selecionar corte"]), button:has(svg[aria-label="Select crop"]), svg[aria-label="Selecionar corte"], svg[aria-label="Select crop"]').first
                 if crop_btn.is_visible(timeout=3000):
-                    crop_btn.click()
+                    crop_btn.click(force=True)
                     page.wait_for_timeout(600)
                     orig_opt = page.locator('button:has-text("Original"), span:has-text("Original"), div[role="button"]:has-text("Original"), button:has-text("16:9"), span:has-text("16:9")').first
                     if orig_opt.is_visible(timeout=2000):
-                        orig_opt.click()
+                        orig_opt.click(force=True)
                         page.wait_for_timeout(600)
             except Exception as crop_err:
                 log(f"Aviso ajuste de corte: {crop_err}")
 
-            # Avança pelas etapas (Corte -> Ajustes/Capa -> Legenda)
             for step in range(3):
+                try:
+                    ok_btn = page.locator('button:has-text("OK"), div[role="button"]:has-text("OK")').first
+                    if ok_btn.is_visible(timeout=1000):
+                        ok_btn.click(force=True)
+                        page.wait_for_timeout(500)
+                except Exception:
+                    pass
+
                 next_btn = page.locator('div[role="button"]:has-text("Avançar"), div[role="button"]:has-text("Next"), button:has-text("Avançar"), button:has-text("Next")').first
                 if next_btn.is_visible(timeout=3000):
-                    next_btn.click()
+                    next_btn.click(force=True)
                     page.wait_for_timeout(2500)
-                caption_area = page.locator('div[aria-label="Escreva uma legenda..."], div[aria-label="Write a caption..."], textarea[aria-label="Escreva uma legenda..."]').first
+                caption_area = page.locator('div[aria-label="Add a caption..."], div[aria-label="Write a caption..."], div[aria-label="Escreva uma legenda..."], div[role="textbox"]').first
                 if caption_area.is_visible(timeout=1500):
                     break
 
-            # Preencher legenda
-            caption_area = page.locator('div[aria-label="Escreva uma legenda..."], div[aria-label="Write a caption..."], textarea[aria-label="Escreva uma legenda..."]').first
+            caption_area = page.locator('div[aria-label="Add a caption..."], div[aria-label="Write a caption..."], div[aria-label="Escreva uma legenda..."], div[role="textbox"]').first
             if caption_area.is_visible(timeout=5000):
-                caption_area.click()
-                caption_area.fill(text)
+                caption_area.click(force=True)
+                caption_area.fill(full_text)
                 page.wait_for_timeout(1000)
 
-            # Botão Compartilhar / Share
-            share_btn = page.locator('div[role="button"]:has-text("Compartilhar"), div[role="button"]:has-text("Share")').first
-            share_btn.click()
+            dialog = page.locator('div[role="dialog"]').last
+            share_btn = dialog.locator('div[role="button"]:has-text("Compartilhar"), div[role="button"]:has-text("Share"), button:has-text("Compartilhar"), button:has-text("Share")').first
+            share_btn.click(force=True)
             log("Botão de compartilhar clicado. Aguardando conclusão do envio...")
 
-            # Aguardar confirmação "Sua publicação foi compartilhada"
-            page.wait_for_selector('text="Sua publicação foi compartilhada", text="Your post has been shared"', timeout=35000)
-            log("SUCESSO: Post publicado com sucesso no Instagram!")
-            record_post_history(text, valid_medias, True)
-            browser.close()
-            return True
+            try:
+                page.wait_for_selector('text="Your reel has been shared.", text="Your reel has been shared", text="Your post has been shared.", text="Your post has been shared", text="Sua publicação foi compartilhada", text="Seu reel foi compartilhado", svg[aria-label="Animated checkmark"]', timeout=60000)
+                log("SUCESSO: Post publicado com sucesso no Instagram!")
+                record_post_history(full_text, valid_medias, True, "Publicado com sucesso", trend_report)
+                browser.close()
+                return True
+            except Exception as wait_err:
+                if page.locator('div[role="dialog"]:has-text("New reel"), div[role="dialog"]:has-text("Create new post")').count() == 0:
+                    log("SUCESSO: Modal de publicação concluído e fechado no Instagram!")
+                    record_post_history(full_text, valid_medias, True, "Modal concluído", trend_report)
+                    browser.close()
+                    return True
+                raise wait_err
 
         except Exception as e:
             err_msg = str(e)
             log(f"FALHA ao publicar no Instagram: {err_msg}")
             screenshot_path = str(SESSIONS_DIR / "instagram_post_error.png")
-            page.screenshot(path=screenshot_path)
-            record_post_history(text, valid_medias, False, err_msg)
+            try:
+                page.screenshot(path=screenshot_path)
+            except Exception:
+                pass
+            record_post_history(full_text, valid_medias, False, err_msg, trend_report)
             browser.close()
             return False
+
 
 def show_history():
     if not HISTORY_FILE.exists():
@@ -210,9 +283,12 @@ def show_history():
         print(f"[{p.get('timestamp')}] {status}: {p.get('text')[:60]}...")
     print("-------------------------------------------\n")
 
+
 def main():
-    parser = argparse.ArgumentParser(description="Instagram Auto-Poster")
+    parser = argparse.ArgumentParser(description="Instagram Auto-Poster com Análise de Tendências do Exterior")
     parser.add_argument("--login", action="store_true", help="Login interativo no Instagram")
+    parser.add_argument("--analyze-only", action="store_true", help="Apenas executa a análise de tendências internacionais sem publicar")
+    parser.add_argument("--live-trends", action="store_true", help="Consulta as páginas do exterior ao vivo antes de postar")
     parser.add_argument("--post", type=str, help="Texto da legenda")
     parser.add_argument("--hashtags", type=str, default="", help="Hashtags separadas por espaço")
     parser.add_argument("--media", nargs="+", help="Arquivos de imagem ou vídeo")
@@ -225,13 +301,14 @@ def main():
         interactive_login()
     elif args.history:
         show_history()
+    elif args.analyze_only:
+        report = trend_analyzer.analyze_and_adapt(args.post or "", args.hashtags, args.media, live=args.live_trends)
+        trend_analyzer.print_trend_report(report)
     elif args.post:
-        full_text = args.post
-        if args.hashtags:
-            full_text = f"{full_text}\n\n{args.hashtags}".strip()
-        post_instagram(full_text, args.media, headless=not args.visible)
+        post_instagram(args.post, args.media, hashtags=args.hashtags, headless=not args.visible, live_trends=args.live_trends)
     else:
         parser.print_help()
+
 
 if __name__ == "__main__":
     main()
