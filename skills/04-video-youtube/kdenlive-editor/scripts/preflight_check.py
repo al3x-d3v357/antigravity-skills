@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Preflight check script for Kdenlive editor skill.
+"""Preflight check script for Kdenlive editor skill (Linux & cross-platform).
 
 Validates:
 1. Kdenlive installation path and executable status.
-2. MLT engine (melt.exe) availability.
+2. MLT engine (melt) and FFmpeg availability.
 3. Running Kdenlive instance detection.
 4. Input media files or directories (if supplied).
 
@@ -22,76 +22,76 @@ import subprocess
 import sys
 from pathlib import Path
 
-DEFAULT_KDENLIVE_PATHS = [
-    r"D:\Programas\kdenlive-26.08.1_standalone\bin\kdenlive.exe",
-    r"C:\Program Files\kdenlive\bin\kdenlive.exe",
+LINUX_KDENLIVE_PATHS = [
+    "/usr/bin/kdenlive",
+    "/usr/local/bin/kdenlive",
+    "/var/lib/flatpak/exports/bin/org.kde.kdenlive",
+    str(Path.home() / ".local/share/flatpak/exports/bin/org.kde.kdenlive"),
 ]
 
 
 def check_running_process(process_name: str = "kdenlive") -> bool:
-    """Check if kdenlive process is actively running on Windows."""
+    """Check if kdenlive process is actively running on Linux."""
     try:
-        output = subprocess.check_output(
-            ["tasklist", "/FI", f"IMAGENAME eq {process_name}.exe"],
-            text=True,
-            stderr=subprocess.DEVNULL,
-        )
-        return f"{process_name}.exe" in output.lower()
+        # Check via pgrep
+        res = subprocess.run(["pgrep", "-f", process_name], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+        return res.returncode == 0
     except Exception:
         return False
 
 
 def locate_kdenlive_bin() -> tuple[Path | None, Path | None]:
-    """Locate kdenlive.exe and melt.exe."""
-    kdenlive_exe = None
-    for p in DEFAULT_KDENLIVE_PATHS:
-        path = Path(p)
-        if path.is_file():
-            kdenlive_exe = path
-            break
+    """Locate kdenlive and melt binaries on Linux."""
+    kdenlive_bin = None
+    which_path = shutil.which("kdenlive")
+    if which_path:
+        kdenlive_bin = Path(which_path)
+    else:
+        for p in LINUX_KDENLIVE_PATHS:
+            path = Path(p)
+            if path.is_file() and os.access(path, os.X_OK):
+                kdenlive_bin = path
+                break
 
-    if not kdenlive_exe:
-        which_path = shutil.which("kdenlive.exe") or shutil.which("kdenlive")
-        if which_path:
-            kdenlive_exe = Path(which_path)
+    melt_bin = None
+    which_melt = shutil.which("melt")
+    if which_melt:
+        melt_bin = Path(which_melt)
+    elif kdenlive_bin:
+        candidate = kdenlive_bin.parent / "melt"
+        if candidate.is_file():
+            melt_bin = candidate
 
-    melt_exe = None
-    if kdenlive_exe:
-        candidate_melt = kdenlive_exe.parent / "melt.exe"
-        if candidate_melt.is_file():
-            melt_exe = candidate_melt
-
-    if not melt_exe:
-        which_melt = shutil.which("melt.exe") or shutil.which("melt")
-        if which_melt:
-            melt_exe = Path(which_melt)
-
-    return kdenlive_exe, melt_exe
+    return kdenlive_bin, melt_bin
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Preflight check for Kdenlive skill")
+    parser = argparse.ArgumentParser(description="Preflight check for Kdenlive skill on Linux")
     parser.add_argument("--media", nargs="*", help="Media files or directories to validate")
     args = parser.parse_args()
 
-    print("[*] Running Kdenlive Skill Preflight Check...")
+    print("[*] Running Kdenlive Skill Preflight Check (Linux)...")
 
-    kdenlive_exe, melt_exe = locate_kdenlive_bin()
-    if not kdenlive_exe:
-        print("[!] ERROR: kdenlive.exe could not be located in standard paths.")
-        return 2
-    print(f"[+] Kdenlive binary: {kdenlive_exe}")
-
-    if not melt_exe:
-        print("[!] WARNING: melt.exe could not be found beside kdenlive.exe.")
+    ffmpeg_bin = shutil.which("ffmpeg")
+    if ffmpeg_bin:
+        print(f"[+] FFmpeg binary: {ffmpeg_bin}")
     else:
-        print(f"[+] MLT rendering engine: {melt_exe}")
+        print("[!] WARNING: ffmpeg binary not found on PATH.")
+
+    kdenlive_bin, melt_bin = locate_kdenlive_bin()
+    if not kdenlive_bin:
+        print("[*] NOTICE: Kdenlive binary not found on standard paths. FFmpeg headless pipeline will be used.")
+    else:
+        print(f"[+] Kdenlive binary: {kdenlive_bin}")
+
+    if melt_bin:
+        print(f"[+] MLT rendering engine: {melt_bin}")
 
     is_running = check_running_process("kdenlive")
     if is_running:
-        print("[+] Kdenlive instance is currently RUNNING and ready.")
+        print("[+] Kdenlive instance is currently RUNNING.")
     else:
-        print("[*] NOTICE: Kdenlive instance is NOT currently running. Launching may be required.")
+        print("[*] NOTICE: Kdenlive instance is not running.")
 
     if args.media:
         missing = []
@@ -100,12 +100,10 @@ def main() -> int:
             if not p.exists():
                 missing.append(m)
         if missing:
-            print(f"[!] WARNING: The following media files were not found: {missing}")
-            return 1
-        else:
-            print(f"[+] All {len(args.media)} media asset(s) validated successfully.")
+            print(f"[!] ERROR: Missing media files: {', '.join(missing)}")
+            return 2
+        print(f"[+] All {len(args.media)} specified media assets verified.")
 
-    print("[+] Preflight check PASSED.")
     return 0
 
 

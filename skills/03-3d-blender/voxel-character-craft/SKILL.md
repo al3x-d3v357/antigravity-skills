@@ -12,7 +12,7 @@ Skill especializada na criação ultra-rápida e econômica de modelos em **Voxe
 ## 1. Princípios de Economia de Tokens
 
 * **Zero Coordenadas Verbosas no Chat:** Nunca despeje blocos gigantescos de arrays `[x, y, z, r, g, b]` na resposta ao usuário. A geração deve ser executada atomicamente pelo servidor MCP.
-* **Arquétipos Paramétricos:** Utilize as classes procedurais registradas no MCP (`cyberpunk_archer`, `archer`, `tank`, `mage`, `support`, `elf_healer`) ou envie micro-scripts QuickJS estruturados com funções utilitárias (`setBox`).
+* **Arquétipos Paramétricos:** Utilize as classes procedurais registradas no MCP (`cyberpunk_archer`, `archer`, `tank`, `mage`, `support`, `elf_healer`, `ogre`, `peasant_rider`) ou envie micro-scripts QuickJS estruturados com funções utilitárias (`setBox`).
 * **Saída Estruturada e Concisa:** Retorne apenas um resumo operacional com:
   - Nome do Personagem e Arquétipo
   - Paleta de Cores Chave (RGBA)
@@ -29,6 +29,8 @@ Skill especializada na criação ultra-rápida e econômica de modelos em **Voxe
 | **Mage** | Púrpura Imperial (`#55238C`), Ouro Místico (`#FAC32D`), Cristal Magenta (`#D737FF`) | Túnica longa com runas, chapéu cônico, barba volumosa, cajado com cristal |
 | **Tank / Warrior** | Aço Polido (`#415573`), Dourado (`#E1B92D`), Azul Néon (`#2DDCFF`) | Armadura pesada, elmo com visor iluminado, escudo torre e espada larga |
 | **Elf Healer / Support** | Branco Sagrado (`#F0F0F5`), Menta/Esmeralda (`#4BE1EB`), Dourado Divino (`#FFD732`) | Orelhas élficas longas, asas de espírito, cajado da árvore da vida, orbe de cura |
+| **Ogre (Ogro)** | 4 Tons de Verde: Musgo (`#22441C`), Base (`#376E2A`), Claro (`#529E3A`), Pálido (`#7ABC52`) | Presas inferiores de marfim, tanga e ombreira de peles/couro, clava maciça com pregos de ferro |
+| **Peasant Rider (Camponês Montado)** | Cavalo Alazão (`#874B28`), Manta Carmesim (`#AF372D`), Palha (`#E1C369`), Linho Cru (`#D2C3A5`) | Cavalo 4 patas com sela e estribos, rédeas, saco de grãos, chapéu de palha de aba larga, forcado de feno de 3 dentes |
 
 ---
 

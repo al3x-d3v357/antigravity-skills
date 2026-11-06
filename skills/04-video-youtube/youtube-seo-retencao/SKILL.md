@@ -81,7 +81,7 @@ Se este conteúdo te ajudou, inscreva-se no canal, deixe o like e ative o sininh
 
 ## ⏰ Cronograma e Janelas Estratégicas de Publicação
 
-Conforme definido para o canal:
-- **Dias de Publicação:** **Segunda-feira** e **Quarta-feira**
+Conforme definido para o canal (@al3x-d3v357):
+- **Frequência de Publicação:** **Diária (Todos os dias)**
 - **Horário Padrão:** **13:13** (Horário de Brasília)
 - **Status Inicial:** Agendado / Programado no YouTube Studio.

@@ -1,0 +1,23 @@
+{
+  "inicio": "2026-10-21 18:51:50",
+  "status": "CONCLUIDO",
+  "home_office": {
+    "enviadas": 300,
+    "meta": 300,
+    "concluido": true,
+    "puladas": 0,
+    "falhas": 0,
+    "ultima_vaga": "Atendente De Call Center - Sem Experiência - Início Imediato - Bocaiúva/MG - Aec",
+    "ultima_atualizacao": "2026-10-21 19:43:24"
+  },
+  "pcd": {
+    "enviadas": 300,
+    "meta": 300,
+    "concluido": true,
+    "puladas": 0,
+    "falhas": 0,
+    "ultima_vaga": "AUXILIAR ROUPARIA - EXCLUSIVO PCD",
+    "ultima_atualizacao": "2026-10-21 20:34:37"
+  },
+  "fim": "2026-10-21 20:34:40"
+}

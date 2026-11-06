@@ -1,4 +1,4 @@
-﻿---
+---
 name: youtube-studio-uploader
 description: >-
   Automação completa para upload de vídeos e capas (thumbnails) no YouTube Studio via YouTube MCP / Playwright. Permite enviar vídeos renderizados (.mp4, .mkv), anexar capas geradas no Canva ou Affinity, configurar títulos, descrições otimizadas, tags e visibilidade (Público, Não-listado ou Privado).
@@ -6,7 +6,7 @@ description: >-
 
 # YouTube Studio Uploader Automation
 
-Esta skill automatiza a publicação e o upload de vídeos no **YouTube Studio** integrando a pipeline completa de produção de conteúdo do Alex: **Edição (Kdenlive / Drift) ➔ Design de Capas (Canva / Affinity) ➔ Publicação no YouTube**.
+Esta skill automatiza a publicação e o upload de vídeos no **YouTube Studio** integrando a pipeline completa de produção de conteúdo do Alex: **Edição (FFmpeg / Kdenlive) ➔ Design de Capas (Canva / Affinity) ➔ Publicação no YouTube**.
 
 ---
 
@@ -14,7 +14,7 @@ Esta skill automatiza a publicação e o upload de vídeos no **YouTube Studio**
 
 ```mermaid
 flowchart LR
-    A[Vídeo Renderizado / Kdenlive / Drift] --> C[YouTube Studio Uploader]
+    A[Vídeo Renderizado / FFmpeg / Kdenlive] --> C[YouTube Studio Uploader]
     B[Capa Thumbnail / Canva / Affinity] --> C
     C -->|Automação Playwright| D[YouTube Studio / Canal Oficial]
 ```
