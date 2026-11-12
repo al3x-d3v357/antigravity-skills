@@ -45,10 +45,8 @@ Este diretório contém todas as **55 Skills** do ecossistema Antigravity & Open
 ---
 
 ### 🎬 04. Vídeo e Produção Audiovisual (`04-video-youtube/`)
-> Edição, montagem, criação de capas e publicação para **YouTube**, **Drift** e **Kdenlive**.
 
 - **`drift-video-editor`**: Pós-produção avançada no Drift MCP: remoção acústica de silêncios, punch-in dinâmico e timelapses.
-- **`kdenlive-editor`**: Montagem profissional de vídeo, corte de timeline, aplicação de efeitos e renderização via MCP.
 - **`youtube-studio-uploader`**: Upload automatizado de vídeos completos, capas, descrições, tags e agendamento no YouTube Studio.
 - **`youtube-seo-retencao`**: Otimização completa de SEO, CTR magnético, retenção e roteirização para o canal do YouTube.
 - **`youtube-thumbnail-designer`**: Design de capas de alta conversão como arquivos PNG para o YouTube.
@@ -82,6 +80,7 @@ Este diretório contém todas as **55 Skills** do ecossistema Antigravity & Open
 
 ### 📄 08. Produtividade e Documentação (`08-produtividade-documentos/`)
 > Gestão de conhecimento, relatórios, apresentações e conversão de arquivos.
+| use-d-drive | Garante uso obrigatório e exclusivo do disco D: para todos os projetos e arquivos |
 
 - **`csv-to-presentations`**: Conversão de dados tabulares (CSV/Excel) em apresentações PowerPoint formatadas com gráficos.
 - **`document-converter`**: Conversor universal entre Markdown, DOCX e PDF com extração de texto.

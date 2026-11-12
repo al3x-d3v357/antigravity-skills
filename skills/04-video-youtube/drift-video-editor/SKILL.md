@@ -58,6 +58,19 @@ Toda e qualquer composição de elementos gráficos (cards explicativos, caixas 
    - Se a interface possuir barra de status inferior (ex.: progresso de download), elevar o conjunto com **offset de ~40px da borda** para nunca cobrir informações.
    - Exibição contínua durante toda a narração, com fade-in/out de 350ms + SFX pop na entrada/saída.
 
+
+7. **Transições Suaves & Fluidez Visual (Soft Transitions - DIRETRIZ MANDATÓRIA)**:
+   - **Transições sempre suaves e cinematográficas**: Utilizar transições com desaceleração suave (cross-dissolves sutis de 500ms a 800ms, blur-dissolve, ou curvas de interpolação bezier/ease-in-out suave).
+   - **Eliminação de cortes secos ou duros**: Cortes e mudanças de cena entre blocos de conteúdo devem usar transições suaves e orgânicas, evitando cortes bruscos que quebrem o ritmo visual.
+   - **Animações em Elementos Gráficos & SFX**: Cards explicativos e banners entram e saem com slide/fade suave (400ms a 600ms) acompanhados de efeito sonoro sutil sincronizado (whoosh/pop).
+
+8. **Zoom Dinâmico Explicativo (Smart Explanatory Zoom / Spotlight Zoom - DIRETRIZ MANDATÓRIA)**:
+   - **Detecção e Foco em Explicações**: Toda vez que o criador estiver explicando, demonstrando ou mencionando uma parte específica da tela (um bloco de código, botão ou menu de interface, parâmetro, objeto 3D, gráfico, card ou área de detalhe):
+     - **Zoom-in Suave (Punch-In)**: Aplicar imediatamente um zoom progressivo suave (fator de escala de `1.15x` a `1.35x` com interpolação ease-in-out suave de 400ms a 600ms), centralizando o enquadramento na área/elemento exato que está sendo mencionado na fala.
+     - **Sustentação Estável**: Manter o enquadramento focado e estável na área explicada durante todo o período da fala/explicação daquele tópico.
+     - **Zoom-out Suave (Punch-Out)**: Ao concluir a explicação daquela parte ou ao mudar de assunto, transicionar suavemente de volta para o enquadramento normal (escala `1.0x`) com curva de desaceleração suave (ease-out de 400ms a 600ms).
+     - **Realce Visual Sutil (Opcional)**: Pode ser combinado com leve vinheta ou foco suave nas bordas para guiar a atenção do espectador para a região em destaque.
+
 ---
 
 ## 1.2 Variante de marca Fox.iso (opcional)
@@ -74,9 +87,10 @@ A paleta Drift padrão (seção 1) segue obrigatória por default; Fox.iso é op
    - Os cortes acústicos devem eliminar tempos mortos do OBS (início e fim) e silêncios intermediários longos (>0.75s).
    - **É estritamente proibido cortar palavras ou final de frases**: aplicar sempre margem de respiro generosa nas bordas (`pad_in >= 0.18s` a `0.20s` e `pad_out >= 0.30s` a `0.35s`).
    - Toda frase deve ser falada e concluída completamente com dicção natural.
-2. **Ganho Vocal e Presença**:
+2. **Preservação e Ganho Vocal (REGRA MANDATÓRIA - NÃO BAIXAR A VOZ DO CRIADOR)**:
+   - **NUNCA diminuir ou atenuar o volume da voz do criador**: A voz deve sempre permanecer alta, nítida, encorpada e com total presença (alvo de -14 LUFS a -16 LUFS vocal).
    - Em vídeos com microfone rebaixado (`mean_volume < -35dB`), aplicar **obrigatoriamente ganho acústico compensatório (+10dB a +14dB / volume 2.5x a 3.0x)**.
-   - Trilha sonora BGM sempre suave e atenuada (`0.020` a `0.022`) para nunca mascarar a fala.
+   - **Auto-Ducking Profundo na Trilha Sonora (BGM)**: Quando houver voz/fala ativa do criador, a trilha BGM deve ser atenuada automaticamente para níveis muito sutis (`0.010` a `0.015` / -24dB), garantindo que a voz nunca seja mascarada sem que seja necessário reduzir o volume vocal.
 
 ---
 
@@ -112,7 +126,8 @@ Os projetos no Drift Video Editor devem ser estruturados deterministamente em 5 
    - **People Cutouts (0.7.5)**: Em camadas de webcam recortada (fundo transparente), aplicar contorno luminoso neon (`edge_neon` em tom `#F08D39` ou `#5E7AC4`, largura 3px) e sombra projetada suave.
 3. **Track 2 (Main Video Footage & Processamento IA 0.7.5)**:
    - Cortes acústicos de silêncio eliminando pausas e ruídos de gravação.
-   - Zooms contextuais de 10% a 25% em momentos de demonstração técnica e viewport.
+   - **Zooms Dinâmicos Explicativos**: Aplicar zoom suave (1.15x a 1.35x com interpolação ease-in-out de 500ms) direcionado para a área/elemento que o criador estiver explicando, sustentando durante a explicação e retornando suavemente para 1.0x ao finalizar.
+   - **Transições Suaves**: Usar cross-dissolves suaves (500ms a 800ms) e fades com desaceleração orgânica entre cortes e cenas, sem transições duras ou secas.
    - **Face Retouch (Drift 0.7.5 Beauty Effect)**: Sempre que houver câmera do apresentador ou webcam na cena, aplicar o efeito `face_retouch` com parâmetros calibrados para transmissão profissional:
      - `smoothing: 0.45` (suavização sutil da textura da pele)
      - `sharpen: 0.20` (preservação de nitidez de olhos e boca)
